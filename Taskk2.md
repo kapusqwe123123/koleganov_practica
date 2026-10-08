@@ -82,7 +82,107 @@ Met7.
 
 /posts/delete-all - в пути,тк глагол delete-all
 
-/api/getUsers действие в: пути верная пара: ____
-/api?action=deleteUser&... действие в: query верная пара: ____
-/users/5/remove действие в: пути верная пара: ____
-/posts/delete-all действие в: пути верная пара: ____
+/api/getUsers действие в пути. верная пара: GET /api/users
+/api?action=deleteUser&... действие в query. верная пара: DELETE /api/users/5
+/users/5/remove действие в пути. верная пара: DELETE /users/5
+/posts/delete-all действие в пути. верная пара: DELETE /posts
+
+Met8
+Команда 1
+curl -i -X POST https://jsonplaceholder.typicode.com/posts \
+-H "Content-Type: application/json" \
+-d '{"title": "Мой пост", "body": "Текст", "userId": 1}'
+
+статусная строка: HTTP/1.1 201 Created
+
+заголовки: Content-Type: application/json; charset=utf-8 и Location: /posts/101
+
+Команда 2
+
+curl -i https://jsonplaceholder.typicode.com/users/3
+
+статусная строка: HTTP/1.1 200 OK
+
+заголовки: Content-Type: application/json; charset=utf-8 и Cache-Control: max-age=43200
+
+Met9
+
+С Accept:
+статус: 200 OK
+начало тела: { "id": 1, "name": "Leanne Graham", ... }
+
+Без Accept:
+
+статус: 200 OK
+
+начало тела: { "id": 1, "name": "Leanne Graham", ... }
+
+изменилось: ничего - статус, длина и начало тела совпадают
+
+вывод, смотрел ли сервер на Accept: нет, сервер проигнорировал заголовок Accept и вернул JSON в обоих случаях
+
+Met10
+
+Content-Type: application/json →
+
+статус: 201 Created
+
+тело: { "title": "T", "body": "B", "userId": 1, "id": 101 }
+
+Content-Type: text/plain →
+
+статус: 201 Created
+
+тело: { "title": "T", "body": "B", "userId": 1, "id": 101 }
+
+ничего — статус и тело идентичны
+
+Met11
+
+POST /get → статус: 405 Method Not Allowed
+
+GET /post → статус: 405 Method Not Allowed
+
+Код «метод не подходит»: 405 Method Not Allowed
+
+Пришёл в запросе: в обоих — и POST /get, и GET /post.
+
+Met12
+
+A:
+
+один адрес? да (POST /api на всё)
+
+методы по назначению? нет (всё через POST, действие в теле)
+
+статусы со смыслом? нет (один эндпоинт — один статус)
+
+подсказки в ответе? нет
+
+уровень: 0 (болото POX)
+
+B:
+
+один адрес? нет (у каждого ресурса свой адрес /users/1)
+
+методы по назначению? да (GET/PUT/DELETE)
+
+статусы со смыслом? да (200 и 404)
+
+подсказки в ответе? нет
+
+уровень: 2 (HTTP-глаголы)
+
+C:
+
+один адрес? нет
+
+методы по назначению? да
+
+статусы со смыслом? да
+
+подсказки в ответе? да (приходят ссылки на связанные ресурсы)
+
+уровень: 3 (HATEOAS)
+
+
